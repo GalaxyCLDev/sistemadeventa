@@ -15,37 +15,41 @@ if ($conn->connect_error) {
 // Procesar la solicitud de venta
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Obtener el código de barras del formulario
-    $barcode = $_POST["barcode"];
+    $barcode = trim($_POST["barcode"]); // Elimina espacios en blanco al principio y al final del código de barras
     $fechaVenta = date("Y-m-d H:i:s");
 
-    $barcode = trim($_POST["barcode"]); // Elimina espacios en blanco al principio y al final del código de barras
+    $productoQuery = "SELECT ProductoID, ProductoCodigo, ProductoNombre, ProductoPrecio, ProductoStock FROM producto WHERE ProductoCodigo LIKE ?";
+    $stmt = $conn->prepare($productoQuery);
+    $stmt->bind_param("s", $barcode);
+    $stmt->execute();
+    $productoResult = $stmt->get_result();
 
-    $productoQuery = "SELECT ProductoID, ProductoCodigo, ProductoNombre, ProductoPrecio, ProductoStock FROM producto WHERE ProductoCodigo LIKE '%$barcode%'";
-    $productoResult = $conn->query($productoQuery);
-    
     if ($productoResult->num_rows > 0) {
         $row = $productoResult->fetch_assoc();
         $productoID = $row["ProductoID"];
-        $productoCodigo = $row["ProductoCodigo"];        
+        $productoCodigo = $row["ProductoCodigo"];
         $productoNombre = $row["ProductoNombre"];
         $productoPrecio = $row["ProductoPrecio"];
         $cantidadActual = $row["ProductoStock"];
-    
+
         $cantidadVendida = 1; // Cambia esto según tu lógica de venta
         $nuevaCantidad = $cantidadActual - $cantidadVendida;
 
         // Actualiza el stock del producto en la tabla 'producto'
-        $actualizarStockQuery = "UPDATE producto SET ProductoStock = '$nuevaCantidad' WHERE ProductoID = '$productoID'";
-        if ($conn->query($actualizarStockQuery) === TRUE) {
+        $actualizarStockQuery = "UPDATE producto SET ProductoStock = ? WHERE ProductoID = ?";
+        $stmt = $conn->prepare($actualizarStockQuery);
+        $stmt->bind_param("ii", $nuevaCantidad, $productoID);
+        if ($stmt->execute()) {
             echo "Venta registrada correctamente. Stock actualizado.";
         } else {
             echo "Error al registrar la venta y actualizar el stock: " . $conn->error;
         }
 
         // Insertar la venta en la tabla 'venta'
-        $insertQuery = "INSERT INTO venta (ProductoID, ProductoCodigo, ProductoNombre, ProductoPrecio, FechaVenta) VALUES ('$productoID', '$productoCodigo', '$productoNombre', '$productoPrecio', '$fechaVenta')";
-
-        if ($conn->query($insertQuery) === TRUE) {
+        $insertQuery = "INSERT INTO venta (ProductoID, ProductoCodigo, ProductoNombre, ProductoPrecio, FechaVenta) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($insertQuery);
+        $stmt->bind_param("issss", $productoID, $productoCodigo, $productoNombre, $productoPrecio, $fechaVenta);
+        if ($stmt->execute()) {
             echo "Venta registrada correctamente.";
         } else {
             echo "Error al registrar la venta: " . $conn->error;
@@ -53,6 +57,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         echo "Producto no encontrado.";
     }
+
+    $stmt->close();
 }
 
 // Cerrar la conexión a la base de datos
