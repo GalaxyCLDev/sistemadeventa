@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+  </head>
+  
+<head>
+  <title>Registrar Venta</title>
+</head>
+<body>
+  <h1>Registrar Venta</h1>
+  <form action="registrar_ventas.php" method="POST">
+    <label for="producto_id">Producto:</label>
+    <select id="producto_id" name="producto_id" required>
+      <option value="">Seleccione un producto</option>
+      <?php
+      // Conexión a la base de datos
+      $servername = "localhost";
+      $username = "root";
+      $password = "";
+      $dbname = "prueba2";
+      
+      $conn = new mysqli($servername, $username, $password, $dbname);
+      
+      // Verificar la conexión
+      if ($conn->connect_error) {
+          die("Conexión fallida: " . $conn->connect_error);
+      }
+      
+      // Obtener los productos disponibles
+      $sql = "SELECT ProductoID, ProductoNombre, ProductoStock FROM Producto WHERE ProductoStock > 0";
+      $result = $conn->query($sql);
+      
+      if ($result->num_rows > 0) {
+          while ($row = $result->fetch_assoc()) {
+              echo "<option value='" . $row["ProductoID"] . "'>" . $row["ProductoNombre"] . " (Stock: " . $row["ProductoStock"] . ")</option>";
+          }
+      }
+      
+      // Procesar los datos del formulario y registrar la venta
+      if ($_SERVER["REQUEST_METHOD"] == "POST") {
+          // Obtener los valores del formulario
+          $producto_id = $_POST["producto_id"];
+          $cantidad = $_POST["cantidad"];
+          $usuario_id = $_POST["usuario_id"];
+      
+          // Realizar las operaciones necesarias para registrar la venta en la base de datos
+      
+          // Cerrar la conexión después de procesar los datos
+          $conn->close();
+      }
+      ?>
+    </select><br><br>
+    <label for="cantidad">Cantidad:</label>
+    <input type="number" id="cantidad" name="cantidad" min="1" required><br><br>
+    <label for="usuario_id">ID del Usuario:</label>
+    <input type="text" id="usuario_id" name="usuario_id" required><br><br>
+    <input type="submit" value="Registrar Venta">
+  </form>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Menú</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      background-image: linear-gradient(#e6eaf0, #cfd8e3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .menu-container {
+      max-width: 800px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      text-align: center;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    .menu-link {
+      color: #333;
+      font-weight: bold;
+      transition: color 0.3s;
+      cursor: pointer;
+      padding: 10px 20px;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+
+    .menu-link:hover {
+      color: #fff;
+      background-color: #5b8ad4;
+    }
+
+    .logout-link {
+      color: red;
+    }
+
+    .user-name {
+      text-align: center;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="menu-container">
+    <h1>Menú</h1>
+    <div class="user-name">
+      ¡Bienvenido al Inicio!
+    </div>
+    <ul>
+      <li><span class="menu-link" onclick="location.href='usuario.html'">Registrar Nuevo Usuario</span></li>
+      <br>
+      <li><span class="menu-link" onclick="location.href='ventas.php'">Ver Ventas</span></li>
+      <br>
+      <li><span class="menu-link" onclick="location.href='registrar_ventas.php'">Vender</span></li>
+      <br>
+      <li><span class="menu-link" onclick="location.href='proveedores.html'">Agregar Nuevos Proveedores</span></li>
+      <br>
+      <li><span class="menu-link" onclick="location.href='mostrar_proveedores.php'">Ver Proveedores</span></li>
+      <br>
+      <li><span class="menu-link" onclick="location.href='registrar_producto.html'">Registrar Producto Nuevo</span></li>
+      <br>
+      <li><span class="menu-link" onclick="location.href='productos.php'">Ver Productos</span></li>
+      <br>
+      <li><span class="menu-link logout-link" onclick="location.href='login.html'">Cerrar Sesión</span></li>
+    </ul>
+  </div>
+</body>
+</html>
